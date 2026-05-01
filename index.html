@@ -4,652 +4,1028 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fabrizio L'Aprea — Junior QA Tester</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b0f;--surface:#0e1218;--card:#131820;--border:#1e2730;
+  --accent:#00e5b0;--accent-dim:rgba(0,229,176,0.12);
+  --text:#e8edf2;--text-muted:#5a6880;--text-mid:#8a9ab0;
+  --major:#e05252;--major-bg:rgba(224,82,82,0.1);
+  --qmajor:#e0a052;--qmajor-bg:rgba(224,160,82,0.1);
+  --qminor:#5294e0;--qminor-bg:rgba(82,148,224,0.1);
+  --feed:#888;--feed-bg:rgba(136,136,136,0.1);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
 
-  :root {
-    --bg: #080b0f;
-    --surface: #0e1218;
-    --card: #131820;
-    --border: #1e2730;
-    --accent: #00e5b0;
-    --accent-dim: rgba(0,229,176,0.12);
-    --accent-glow: rgba(0,229,176,0.06);
-    --text: #e8edf2;
-    --text-muted: #5a6880;
-    --text-mid: #8a9ab0;
-    --major: #e05252;
-    --major-bg: rgba(224,82,82,0.1);
-    --qmajor: #e0a052;
-    --qmajor-bg: rgba(224,160,82,0.1);
-    --qminor: #5294e0;
-    --qminor-bg: rgba(82,148,224,0.1);
-    --feedback: #888;
-    --feedback-bg: rgba(136,136,136,0.1);
-  }
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.5rem;height:60px;
+  background:rgba(8,11,15,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.nav-logo{font-family:'Space Mono',monospace;font-size:13px;color:var(--accent);letter-spacing:0.08em;cursor:pointer}
+.nav-links{display:flex;gap:2rem}
+.nav-links button{
+  background:none;border:none;cursor:pointer;
+  font-family:'Space Mono',monospace;font-size:12px;color:var(--text-mid);
+  letter-spacing:0.06em;transition:color 0.2s;padding:4px 0;
+}
+.nav-links button:hover,.nav-links button.active{color:var(--accent)}
 
-  html { scroll-behavior: smooth; }
+.page{
+  position:fixed;top:60px;left:0;right:0;bottom:0;
+  overflow-y:auto;overflow-x:hidden;
+  opacity:0;pointer-events:none;transition:opacity 0.25s;
+}
+.page.active{opacity:1;pointer-events:all}
+.page::-webkit-scrollbar{width:4px}
+.page::-webkit-scrollbar-track{background:var(--bg)}
+.page::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-  body {
-    font-family: 'Syne', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
+.inner{max-width:1100px;margin:0 auto;padding:3rem 2.5rem}
 
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 2.5rem;
-    height: 60px;
-    background: rgba(8,11,15,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px; color: var(--accent); letter-spacing: 0.08em;
-  }
-  .nav-links { display: flex; gap: 2rem; }
-  .nav-links a {
-    font-size: 13px; color: var(--text-mid); text-decoration: none;
-    letter-spacing: 0.05em; transition: color 0.2s;
-  }
-  .nav-links a:hover { color: var(--accent); }
+.hero-tag{
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);
+  letter-spacing:0.15em;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.hero-tag::before{content:'';width:32px;height:1px;background:var(--accent)}
+h1{font-size:clamp(3rem,7vw,5.5rem);font-weight:800;line-height:1.05;letter-spacing:-0.02em;margin-bottom:1.25rem}
+.hero-sub{font-size:1rem;color:var(--text-mid);max-width:520px;line-height:1.75;margin-bottom:2.5rem}
+.hero-stats{display:flex;gap:2.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.stat-num{font-size:2.2rem;font-weight:800;color:var(--accent);line-height:1}
+.stat-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.1em;margin-top:4px}
+.hero-cta{display:flex;gap:1rem;flex-wrap:wrap}
 
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 6rem 2.5rem 4rem;
-    max-width: 1100px; margin: 0 auto;
-    position: relative;
-  }
-  .hero-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px; color: var(--accent); letter-spacing: 0.15em;
-    margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 0.75rem;
-  }
-  .hero-tag::before {
-    content: ''; display: block; width: 32px; height: 1px; background: var(--accent);
-  }
-  h1 {
-    font-size: clamp(3rem, 7vw, 5.5rem);
-    font-weight: 800; line-height: 1.05;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.25rem;
-  }
-  .hero-sub {
-    font-size: 1.1rem; color: var(--text-mid); max-width: 520px;
-    line-height: 1.7; margin-bottom: 2.5rem;
-  }
-  .hero-stats {
-    display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2.5rem;
-  }
-  .stat {
-    display: flex; flex-direction: column;
-  }
-  .stat-num {
-    font-size: 2rem; font-weight: 800; color: var(--accent);
-    line-height: 1;
-  }
-  .stat-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em;
-    margin-top: 4px;
-  }
-  .hero-cta {
-    display: flex; gap: 1rem; flex-wrap: wrap;
-  }
-  .btn {
-    padding: 0.75rem 1.75rem; border-radius: 4px;
-    font-family: 'Space Mono', monospace; font-size: 12px;
-    letter-spacing: 0.08em; text-decoration: none;
-    transition: all 0.2s; cursor: pointer;
-  }
-  .btn-primary {
-    background: var(--accent); color: #080b0f; border: none;
-  }
-  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
-  .btn-secondary {
-    background: transparent; color: var(--accent);
-    border: 1px solid var(--accent);
-  }
-  .btn-secondary:hover { background: var(--accent-dim); transform: translateY(-1px); }
+.btn{
+  padding:0.7rem 1.6rem;border-radius:4px;
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:0.08em;cursor:pointer;border:none;transition:all 0.2s;
+  text-decoration:none;display:inline-flex;align-items:center;gap:0.5rem;
+}
+.btn-primary{background:var(--accent);color:#080b0f}
+.btn-primary:hover{opacity:0.85;transform:translateY(-1px)}
+.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-outline:hover{background:var(--accent-dim);transform:translateY(-1px)}
 
-  .hero-grid {
-    position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
-    opacity: 0.04; pointer-events: none;
-    font-family: 'Space Mono', monospace; font-size: 11px;
-    color: var(--accent); line-height: 1.8;
-    display: none;
-  }
+.section-label{
+  font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);
+  letter-spacing:0.2em;margin-bottom:0.5rem;
+  display:flex;align-items:center;gap:0.75rem;
+}
+.section-label::after{content:'';flex:0 0 40px;height:1px;background:var(--accent);opacity:0.4}
+h2{font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:0.5rem}
+.page-desc{color:var(--text-mid);font-size:0.9rem;max-width:580px;line-height:1.7;margin-bottom:2.5rem}
 
-  /* SECTIONS */
-  section {
-    max-width: 1100px; margin: 0 auto;
-    padding: 5rem 2.5rem;
-  }
-  .section-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px; color: var(--accent); letter-spacing: 0.2em;
-    margin-bottom: 0.75rem;
-    display: flex; align-items: center; gap: 0.75rem;
-  }
-  .section-label::after {
-    content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); opacity: 0.4;
-  }
-  h2 {
-    font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
-    letter-spacing: -0.02em; margin-bottom: 0.5rem;
-  }
-  .section-intro {
-    color: var(--text-mid); font-size: 1rem; margin-bottom: 3rem;
-    max-width: 580px;
-  }
+.about-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:3rem;align-items:start}
+.about-text p{color:var(--text-mid);line-height:1.8;margin-bottom:1rem;font-size:0.9rem}
+.about-text p strong{color:var(--text);font-weight:700}
+.detail-cards{display:flex;flex-direction:column;gap:0.85rem}
+.detail-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem}
+.detail-label{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.15em;margin-bottom:4px}
+.detail-value{font-size:0.9rem;color:var(--text);font-weight:600}
+.detail-sub{font-size:0.78rem;color:var(--text-muted);margin-top:2px}
 
-  /* ABOUT */
-  .about-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
-    align-items: start;
-  }
-  .about-text p {
-    color: var(--text-mid); line-height: 1.8; margin-bottom: 1rem; font-size: 0.95rem;
-  }
-  .about-text p strong { color: var(--text); font-weight: 600; }
-  .about-details {
-    display: flex; flex-direction: column; gap: 1rem;
-  }
-  .detail-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 1.25rem 1.5rem;
-  }
-  .detail-card-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px; color: var(--accent); letter-spacing: 0.15em;
-    margin-bottom: 0.5rem;
-  }
-  .detail-card-value {
-    font-size: 0.95rem; color: var(--text); font-weight: 600;
-  }
-  .detail-card-sub {
-    font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;
-  }
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.skill-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem}
+.skill-group-title{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.15em;margin-bottom:0.75rem}
+.skill-tags{display:flex;flex-wrap:wrap;gap:0.4rem}
+.skill-tag{background:var(--accent-dim);color:var(--accent);font-family:'Space Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px}
 
-  /* SKILLS */
-  .skills-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
-  }
-  .skill-group {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 8px; padding: 1.25rem 1.5rem;
-  }
-  .skill-group-title {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px; color: var(--accent); letter-spacing: 0.15em;
-    margin-bottom: 0.75rem;
-  }
-  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .skill-tag {
-    background: var(--accent-dim); color: var(--accent);
-    font-family: 'Space Mono', monospace; font-size: 10px;
-    padding: 3px 8px; border-radius: 3px; letter-spacing: 0.05em;
-  }
+.games-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem}
+.game-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;cursor:pointer;transition:border-color 0.2s,transform 0.2s;
+}
+.game-card:hover{border-color:rgba(0,229,176,0.35);transform:translateY(-2px)}
+.gc-header{padding:1.25rem 1.25rem 0.85rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:0.75rem}
+.gc-title{font-size:1rem;font-weight:700;margin-bottom:3px}
+.gc-meta{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:0.05em}
+.platform-badge{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-mid);white-space:nowrap;flex-shrink:0}
+.gc-body{padding:0.85rem 1.25rem 1.25rem}
+.gc-type{font-size:0.78rem;color:var(--text-muted);font-style:italic;margin-bottom:0.85rem}
+.gc-bugs-summary{display:flex;flex-direction:column;gap:0.4rem}
+.gc-bug-line{display:flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--text-mid)}
+.sev-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sev-dot.major{background:var(--major)}
+.sev-dot.qmajor{background:var(--qmajor)}
+.sev-dot.qminor{background:var(--qminor)}
+.sev-dot.feed{background:var(--feed)}
+.gc-footer{padding:0.75rem 1.25rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.gc-counts{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-muted)}
+.gc-arrow{font-size:0.75rem;color:var(--accent);font-family:'Space Mono',monospace}
 
-  /* PORTFOLIO */
-  .portfolio-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;
-  }
-  .game-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 10px; overflow: hidden;
-    transition: border-color 0.25s, transform 0.2s;
-  }
-  .game-card:hover {
-    border-color: rgba(0,229,176,0.3); transform: translateY(-2px);
-  }
-  .game-card-header {
-    padding: 1.5rem 1.5rem 1rem;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
-  }
-  .game-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.25rem; }
-  .game-meta {
-    font-family: 'Space Mono', monospace; font-size: 10px;
-    color: var(--text-muted); letter-spacing: 0.05em;
-  }
-  .platform-badge {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 4px; padding: 4px 10px;
-    font-family: 'Space Mono', monospace; font-size: 10px;
-    color: var(--text-mid); white-space: nowrap; flex-shrink: 0;
-  }
-  .game-card-body { padding: 1rem 1.5rem 1.5rem; }
-  .game-type {
-    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;
-    font-style: italic;
-  }
-  .bugs-list { display: flex; flex-direction: column; gap: 0.6rem; }
-  .bug-item {
-    border-radius: 6px; padding: 0.65rem 0.85rem;
-    display: flex; align-items: flex-start; gap: 0.75rem;
-  }
-  .bug-item.major { background: var(--major-bg); }
-  .bug-item.qmajor { background: var(--qmajor-bg); }
-  .bug-item.qminor { background: var(--qminor-bg); }
-  .bug-item.feedback { background: var(--feedback-bg); }
-  .bug-severity {
-    font-family: 'Space Mono', monospace; font-size: 9px;
-    letter-spacing: 0.05em; white-space: nowrap; padding-top: 1px;
-    flex-shrink: 0;
-  }
-  .major .bug-severity { color: var(--major); }
-  .qmajor .bug-severity { color: var(--qmajor); }
-  .qminor .bug-severity { color: var(--qminor); }
-  .feedback .bug-severity { color: var(--feedback); }
-  .bug-desc { font-size: 0.8rem; color: var(--text-mid); line-height: 1.5; }
-  .bug-tags {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
-  }
-  .bug-tag {
-    font-family: 'Space Mono', monospace; font-size: 9px;
-    color: var(--text-muted); background: var(--surface);
-    padding: 2px 6px; border-radius: 2px;
-  }
-  .repro-badge {
-    font-family: 'Space Mono', monospace; font-size: 9px;
-    color: var(--accent); margin-top: 4px; display: block;
-  }
+.back-btn{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  font-family:'Space Mono',monospace;font-size:11px;color:var(--text-muted);
+  background:none;border:none;cursor:pointer;padding:0;
+  transition:color 0.2s;margin-bottom:1.75rem;
+}
+.back-btn:hover{color:var(--accent)}
+.game-detail-header{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.game-detail-header h2{margin-bottom:0.5rem}
+.game-detail-meta{display:flex;gap:0.75rem;flex-wrap:wrap;align-items:center}
+.meta-pill{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:4px 10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--text-mid)}
+.game-detail-context{font-size:0.85rem;color:var(--text-muted);margin-top:0.75rem;font-style:italic}
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 2.5rem;
-    max-width: 1100px; margin: 0 auto;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
-  }
-  .footer-name {
-    font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted);
-  }
-  .footer-links { display: flex; gap: 1.5rem; }
-  .footer-links a {
-    font-family: 'Space Mono', monospace; font-size: 11px;
-    color: var(--text-muted); text-decoration: none;
-    transition: color 0.2s; letter-spacing: 0.05em;
-  }
-  .footer-links a:hover { color: var(--accent); }
+.reports-list{display:flex;flex-direction:column;gap:1.25rem}
+.report-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.report-card.is-major{border-left:3px solid var(--major)}
+.report-card.is-qmajor{border-left:3px solid var(--qmajor)}
+.report-card.is-qminor{border-left:3px solid var(--qminor)}
+.report-card.is-feed{border-left:3px solid var(--feed)}
+.report-header{padding:1rem 1.25rem 0.75rem;border-bottom:1px solid var(--border);display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap}
+.report-badges{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;flex-shrink:0}
+.badge{font-family:'Space Mono',monospace;font-size:9px;padding:3px 8px;border-radius:3px;letter-spacing:0.05em;white-space:nowrap}
+.badge-type{background:var(--surface);color:var(--text-mid);border:1px solid var(--border)}
+.badge-major{background:var(--major-bg);color:var(--major)}
+.badge-qmajor{background:var(--qmajor-bg);color:var(--qmajor)}
+.badge-qminor{background:var(--qminor-bg);color:var(--qminor)}
+.badge-feed{background:var(--feed-bg);color:var(--feed)}
+.badge-platform{background:var(--accent-dim);color:var(--accent)}
+.report-summary{font-size:0.92rem;font-weight:600;line-height:1.4;color:var(--text)}
+.report-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.report-tag{font-family:'Space Mono',monospace;font-size:9px;color:var(--text-muted);background:var(--surface);padding:2px 6px;border-radius:2px}
+.report-body{padding:1.25rem}
+.report-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.report-field label{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);letter-spacing:0.1em;display:block;margin-bottom:0.35rem}
+.report-field p{font-size:0.82rem;color:var(--text-mid);line-height:1.6}
+.report-field.full{grid-column:1/-1}
+.steps-list{list-style:none;display:flex;flex-direction:column;gap:0.4rem}
+.steps-list li{display:flex;gap:0.75rem;font-size:0.82rem;color:var(--text-mid);line-height:1.5}
+.step-num{font-family:'Space Mono',monospace;font-size:9px;color:var(--accent);background:var(--accent-dim);width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.report-footer{padding:0.75rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:1.5rem;flex-wrap:wrap}
+.report-meta-item{display:flex;align-items:center;gap:0.4rem;font-family:'Space Mono',monospace;font-size:9px;color:var(--text-muted)}
+.report-meta-item span:last-child{color:var(--text-mid)}
+.note-card{background:rgba(0,229,176,0.04);border:1px solid rgba(0,229,176,0.15);border-radius:6px;padding:0.75rem 1rem;margin-top:0.85rem}
+.note-card p{font-size:0.8rem;color:var(--text-muted);line-height:1.6}
+.note-card strong{color:var(--accent);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.1em}
 
-  /* DIVIDER */
-  .divider {
-    border: none; border-top: 1px solid var(--border);
-    max-width: 1100px; margin: 0 auto;
-  }
+.site-footer{border-top:1px solid var(--border);padding:1.25rem 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;margin-top:3rem}
+.footer-text{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted)}
+.footer-link{font-family:'Space Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;transition:color 0.2s}
+.footer-link:hover{color:var(--accent)}
 
-  /* RESPONSIVE */
-  @media (max-width: 700px) {
-    nav { padding: 0 1.25rem; }
-    .nav-links { gap: 1rem; }
-    section { padding: 3.5rem 1.25rem; }
-    .hero { padding: 5rem 1.25rem 3rem; }
-    .about-grid { grid-template-columns: 1fr; }
-    footer { padding: 2rem 1.25rem; flex-direction: column; align-items: flex-start; }
-  }
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.012) 2px,rgba(0,0,0,0.012) 4px);pointer-events:none;z-index:9999}
 
-  /* SCAN LINE EFFECT */
-  body::after {
-    content: '';
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: repeating-linear-gradient(
-      0deg, transparent, transparent 2px,
-      rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px
-    );
-    pointer-events: none; z-index: 9999;
-  }
-
-  /* ACCENT LINE */
-  .accent-line {
-    width: 60px; height: 3px; background: var(--accent);
-    border-radius: 2px; margin-bottom: 1.5rem;
-  }
+@media(max-width:700px){
+  nav{padding:0 1.25rem}
+  .nav-links{gap:1rem}
+  .inner{padding:2rem 1.25rem}
+  .about-grid{grid-template-columns:1fr}
+  .report-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-logo">FL // QA</div>
+  <div class="nav-logo" onclick="showPage('home')">FL // QA</div>
   <div class="nav-links">
-    <a href="#about">About</a>
-    <a href="#portfolio">Portfolio</a>
-    <a href="#skills">Skills</a>
-    <a href="https://bit.ly/v2-portfolio" target="_blank">Full Report</a>
+    <button onclick="showPage('about')" id="nav-about">About</button>
+    <button onclick="showPage('portfolio')" id="nav-portfolio">Portfolio</button>
+    <button onclick="showPage('skills')" id="nav-skills">Skills</button>
   </div>
 </nav>
 
-<div class="hero">
-  <div class="hero-tag">JUNIOR QA TESTER — GAME TESTING</div>
-  <h1>Fabrizio<br>L'Aprea</h1>
-  <p class="hero-sub">
-    Methodical game tester with a background in audio production and 20+ years of gaming experience across every major PlayStation generation. Focused on functional testing, bug documentation, and Audio QA.
-  </p>
-  <div class="hero-stats">
-    <div class="stat">
-      <span class="stat-num">9</span>
-      <span class="stat-label">BUGS DOCUMENTED</span>
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="inner" style="display:flex;flex-direction:column;justify-content:center;min-height:100%">
+    <div class="hero-tag">JUNIOR QA TESTER — GAME TESTING</div>
+    <h1>Fabrizio<br>L'Aprea</h1>
+    <p class="hero-sub">Methodical game tester with a background in audio production and 20+ years of gaming experience across every major PlayStation generation. Focused on functional testing, bug documentation, and Audio QA.</p>
+    <div class="hero-stats">
+      <div><div class="stat-num">9</div><div class="stat-label">BUGS DOCUMENTED</div></div>
+      <div><div class="stat-num">5</div><div class="stat-label">GAMES TESTED</div></div>
+      <div><div class="stat-num">3</div><div class="stat-label">PLATFORMS</div></div>
+      <div><div class="stat-num">100%</div><div class="stat-label">AVG REPRO RATE</div></div>
     </div>
-    <div class="stat">
-      <span class="stat-num">5</span>
-      <span class="stat-label">GAMES TESTED</span>
+    <div class="hero-cta">
+      <button class="btn btn-primary" onclick="showPage('portfolio')">View Portfolio</button>
+      <button class="btn btn-outline" onclick="showPage('about')">About Me</button>
     </div>
-    <div class="stat">
-      <span class="stat-num">3</span>
-      <span class="stat-label">PLATFORMS</span>
+    <div class="site-footer">
+      <span class="footer-text">Naples, Italy · Available Remote · fabriziolaprea@gmail.com</span>
+      <a href="https://bit.ly/v2-portfolio" target="_blank" class="footer-link">Full Spreadsheet ↗</a>
     </div>
-    <div class="stat">
-      <span class="stat-num">100%</span>
-      <span class="stat-label">AVG REPRO RATE</span>
-    </div>
-  </div>
-  <div class="hero-cta">
-    <a href="https://bit.ly/v2-portfolio" target="_blank" class="btn btn-primary">View Full Portfolio</a>
-    <a href="mailto:fabriziolaprea@gmail.com" class="btn btn-secondary">Get in Touch</a>
   </div>
 </div>
 
-<hr class="divider">
-
-<section id="about">
-  <div class="section-label">ABOUT</div>
-  <h2>Background</h2>
-  <p class="section-intro">Two decades of gaming experience combined with a trained audio ear — applied to systematic bug finding.</p>
-  <div class="about-grid">
-    <div class="about-text">
-      <p>
-        I approach QA testing the same way I approach music production: with <strong>systematic attention to detail</strong>, pattern recognition, and a deep understanding of what a flawless experience should feel like — and what breaks it.
-      </p>
-      <p>
-        My background includes over <strong>20 years of DJ and music production activity</strong>, which directly translates to Audio QA competency. A trained ear for sound design, mix balance, volume inconsistencies, and audio anomalies in gaming contexts.
-      </p>
-      <p>
-        I completed a <strong>QA Testing course at Digital Bros Game Academy</strong> and have been independently playtesting and documenting bugs across Android, PS5, and PC platforms since 2024.
-      </p>
-      <p>
-        Open to <strong>remote and part-time opportunities</strong> in game testing and Audio QA across Europe.
-      </p>
-    </div>
-    <div class="about-details">
-      <div class="detail-card">
-        <div class="detail-card-label">LOCATION</div>
-        <div class="detail-card-value">Naples, Italy</div>
-        <div class="detail-card-sub">Available: Remote · Hybrid (Europe)</div>
+<!-- ABOUT -->
+<div class="page" id="page-about">
+  <div class="inner">
+    <div class="section-label">ABOUT</div>
+    <h2>Background</h2>
+    <p class="page-desc">Two decades of gaming experience combined with a trained audio ear — applied to systematic bug finding.</p>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>I approach QA testing the same way I approach music production: with <strong>systematic attention to detail</strong>, pattern recognition, and a deep understanding of what a flawless experience should feel like — and what breaks it.</p>
+        <p>My background includes over <strong>20 years of DJ and music production activity</strong>, which directly translates to Audio QA competency. A trained ear for sound design, mix balance, volume inconsistencies, and audio anomalies in gaming contexts. Releases under the alias <strong>Micro-Ice</strong> on Biometric Audio.</p>
+        <p>I completed a <strong>QA Testing course at Digital Bros Game Academy</strong> and have been independently playtesting and documenting bugs across Android, PS5, and PC platforms since 2024.</p>
+        <p>Open to <strong>remote and part-time opportunities</strong> in game testing and Audio QA across Europe.</p>
       </div>
-      <div class="detail-card">
-        <div class="detail-card-label">EDUCATION</div>
-        <div class="detail-card-value">QA Tester Course</div>
-        <div class="detail-card-sub">Digital Bros Game Academy · Feb–Apr 2025</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-card-label">LANGUAGES</div>
-        <div class="detail-card-value">Italian (Native) · English (C1)</div>
-        <div class="detail-card-sub">Localization testing capable</div>
-      </div>
-      <div class="detail-card">
-        <div class="detail-card-label">AUDIO BACKGROUND</div>
-        <div class="detail-card-value">DJ & Music Producer</div>
-        <div class="detail-card-sub">20+ years · Releases on Biometric Audio as Micro-Ice</div>
+      <div class="detail-cards">
+        <div class="detail-card">
+          <div class="detail-label">LOCATION</div>
+          <div class="detail-value">Naples, Italy</div>
+          <div class="detail-sub">Available: Remote · Hybrid (Europe)</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">EDUCATION</div>
+          <div class="detail-value">QA Tester Course</div>
+          <div class="detail-sub">Digital Bros Game Academy · Feb–Apr 2025</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">LANGUAGES</div>
+          <div class="detail-value">Italian (Native) · English (C1)</div>
+          <div class="detail-sub">Localization testing capable</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">AUDIO BACKGROUND</div>
+          <div class="detail-value">DJ &amp; Music Producer</div>
+          <div class="detail-sub">20+ years · Releases on Biometric Audio as Micro-Ice</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-label">CONTACT</div>
+          <div class="detail-value">fabriziolaprea@gmail.com</div>
+          <div class="detail-sub">+39 346 857 3095</div>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<hr class="divider">
-
-<section id="skills">
-  <div class="section-label">SKILLS</div>
-  <h2>Technical Profile</h2>
-  <p class="section-intro">Core competencies built through coursework and independent testing practice.</p>
-  <div class="skills-grid">
-    <div class="skill-group">
-      <div class="skill-group-title">TESTING METHODS</div>
-      <div class="skill-tags">
-        <span class="skill-tag">Functional</span>
-        <span class="skill-tag">Regression</span>
-        <span class="skill-tag">Exploratory</span>
-        <span class="skill-tag">Localization QA</span>
-        <span class="skill-tag">Audio QA</span>
+<!-- SKILLS -->
+<div class="page" id="page-skills">
+  <div class="inner">
+    <div class="section-label">SKILLS</div>
+    <h2>Technical Profile</h2>
+    <p class="page-desc">Core competencies built through coursework and independent testing practice.</p>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-title">TESTING METHODS</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Functional</span>
+          <span class="skill-tag">Regression</span>
+          <span class="skill-tag">Exploratory</span>
+          <span class="skill-tag">Localization QA</span>
+          <span class="skill-tag">Audio QA</span>
+        </div>
       </div>
-    </div>
-    <div class="skill-group">
-      <div class="skill-group-title">TOOLS</div>
-      <div class="skill-tags">
-        <span class="skill-tag">JIRA</span>
-        <span class="skill-tag">Google Sheets</span>
-        <span class="skill-tag">Bug Tracking</span>
-        <span class="skill-tag">Screen Capture</span>
-        <span class="skill-tag">Clip Recording</span>
+      <div class="skill-group">
+        <div class="skill-group-title">TOOLS</div>
+        <div class="skill-tags">
+          <span class="skill-tag">JIRA</span>
+          <span class="skill-tag">Google Sheets</span>
+          <span class="skill-tag">Bug Tracking</span>
+          <span class="skill-tag">Screen Capture</span>
+          <span class="skill-tag">Clip Recording</span>
+        </div>
       </div>
-    </div>
-    <div class="skill-group">
-      <div class="skill-group-title">PLATFORMS</div>
-      <div class="skill-tags">
-        <span class="skill-tag">PlayStation 5</span>
-        <span class="skill-tag">PC / Steam</span>
-        <span class="skill-tag">Android</span>
-        <span class="skill-tag">Console Cert</span>
+      <div class="skill-group">
+        <div class="skill-group-title">PLATFORMS</div>
+        <div class="skill-tags">
+          <span class="skill-tag">PlayStation 5</span>
+          <span class="skill-tag">PC / Steam</span>
+          <span class="skill-tag">Android</span>
+        </div>
       </div>
-    </div>
-    <div class="skill-group">
-      <div class="skill-group-title">AUDIO QA</div>
-      <div class="skill-tags">
-        <span class="skill-tag">Sound Anomalies</span>
-        <span class="skill-tag">Mix Balance</span>
-        <span class="skill-tag">Audio Sync</span>
-        <span class="skill-tag">Voice Lines</span>
-        <span class="skill-tag">Ambient Audio</span>
+      <div class="skill-group">
+        <div class="skill-group-title">AUDIO QA</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Sound Anomalies</span>
+          <span class="skill-tag">Mix Balance</span>
+          <span class="skill-tag">Audio Sync</span>
+          <span class="skill-tag">Voice Lines</span>
+          <span class="skill-tag">Ambient Audio</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">DOCUMENTATION</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Bug Reports</span>
+          <span class="skill-tag">Test Cases</span>
+          <span class="skill-tag">Repro Steps</span>
+          <span class="skill-tag">Severity Rating</span>
+          <span class="skill-tag">Video Evidence</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">SOFT SKILLS</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Attention to Detail</span>
+          <span class="skill-tag">Pattern Recognition</span>
+          <span class="skill-tag">Team Collaboration</span>
+          <span class="skill-tag">Adaptable</span>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<hr class="divider">
+<!-- PORTFOLIO -->
+<div class="page" id="page-portfolio">
+  <div class="inner">
+    <div class="section-label">PORTFOLIO</div>
+    <h2>Games Tested</h2>
+    <p class="page-desc">5 games across 3 platforms. Click a title to view the full bug report.</p>
+    <div class="games-grid">
 
-<section id="portfolio">
-  <div class="section-label">PORTFOLIO</div>
-  <h2>Bug Reports</h2>
-  <p class="section-intro">5 games tested across 3 platforms. All reports include severity assessment, reproduction steps, and documentation.</p>
-
-  <div class="portfolio-grid">
-
-    <!-- DESTARA -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <div>
-          <div class="game-title">Destara</div>
-          <div class="game-meta">MOBILE GAME · SEP 2025 · 14 DAYS</div>
+      <div class="game-card" onclick="showGame('destara')">
+        <div class="gc-header">
+          <div><div class="gc-title">Destara</div><div class="gc-meta">ANDROID · SEP 2025 · 14 DAYS</div></div>
+          <div class="platform-badge">Android</div>
         </div>
-        <div class="platform-badge">Android</div>
-      </div>
-      <div class="game-card-body">
-        <div class="game-type">Collaborative playtesting · Team of 15 testers + 2 devs</div>
-        <div class="bugs-list">
-          <div class="bug-item qmajor">
-            <span class="bug-severity">Q.MAJOR</span>
-            <div>
-              <div class="bug-desc">Common Italian names censored on name entry screen — inconsistently blocked by filter</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Text]</span></div>
-              <span class="repro-badge">↑ 100% repro</span>
-            </div>
-          </div>
-          <div class="bug-item qminor">
-            <span class="bug-severity">Q.MINOR</span>
-            <div>
-              <div class="bug-desc">Duplicate word in "Superstition" tutorial text — localization error</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Text]</span></div>
-              <span class="repro-badge">↑ 100% repro</span>
-            </div>
-          </div>
-          <div class="bug-item feedback">
-            <span class="bug-severity">FEEDBACK</span>
-            <div>
-              <div class="bug-desc">"Waiting" ability shows no visible damage increase despite documented stat change</div>
-              <div class="bug-tags"><span class="bug-tag">[UX]</span><span class="bug-tag">[Game Logic]</span></div>
-            </div>
-          </div>
-          <div class="bug-item feedback">
-            <span class="bug-severity">FEEDBACK</span>
-            <div>
-              <div class="bug-desc">Damage pop-ups disappear too quickly to be read by the player</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[UX]</span></div>
-            </div>
+        <div class="gc-body">
+          <div class="gc-type">Collaborative playtesting · Team of 15 testers + 2 devs</div>
+          <div class="gc-bugs-summary">
+            <div class="gc-bug-line"><div class="sev-dot qmajor"></div>Names censored on name entry screen</div>
+            <div class="gc-bug-line"><div class="sev-dot qminor"></div>Text error in "Superstition" tutorial</div>
+            <div class="gc-bug-line"><div class="sev-dot feed"></div>"Waiting" ability shows no damage change (Feedback)</div>
+            <div class="gc-bug-line"><div class="sev-dot feed"></div>Damage pop-ups disappear too quickly (Feedback)</div>
           </div>
         </div>
+        <div class="gc-footer">
+          <div class="gc-counts">2 BUGS · 2 FEEDBACK · Q.MAJOR – Q.MINOR</div>
+          <div class="gc-arrow">VIEW REPORT →</div>
+        </div>
       </div>
+
+      <div class="game-card" onclick="showGame('marvel')">
+        <div class="gc-header">
+          <div><div class="gc-title">Marvel Tōkon: Fighting Souls</div><div class="gc-meta">PS5 · DEC 2025 · 3 DAYS</div></div>
+          <div class="platform-badge">PS5</div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-type">Official PlayStation closed beta</div>
+          <div class="gc-bugs-summary">
+            <div class="gc-bug-line"><div class="sev-dot qminor"></div>Audio preview missing for SE and Ambient volume</div>
+          </div>
+        </div>
+        <div class="gc-footer">
+          <div class="gc-counts">1 BUG · Q.MINOR · AUDIO</div>
+          <div class="gc-arrow">VIEW REPORT →</div>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="showGame('forever')">
+        <div class="gc-header">
+          <div><div class="gc-title">Forever Skies</div><div class="gc-meta">PC · 2026 · V1.2.2 BUILD #43949</div></div>
+          <div class="platform-badge">PC</div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-type">Independent retail playtesting</div>
+          <div class="gc-bugs-summary">
+            <div class="gc-bug-line"><div class="sev-dot major"></div>Infinite water refill exploit via Old Canned Water</div>
+            <div class="gc-bug-line"><div class="sev-dot qminor"></div>Italian localization error in Wasteland Tower</div>
+          </div>
+        </div>
+        <div class="gc-footer">
+          <div class="gc-counts">2 BUGS · MAJOR – Q.MINOR</div>
+          <div class="gc-arrow">VIEW REPORT →</div>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="showGame('arc')">
+        <div class="gc-header">
+          <div><div class="gc-title">ARC Raiders</div><div class="gc-meta">PC · 2026 · BUILD ID 22727655</div></div>
+          <div class="platform-badge">PC</div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-type">Independent retail playtesting</div>
+          <div class="gc-bugs-summary">
+            <div class="gc-bug-line"><div class="sev-dot qmajor"></div>Quest "Serata Film" active on wrong maps</div>
+            <div class="gc-bug-line"><div class="sev-dot qminor"></div>Apollo voice line triggers on wrong maps</div>
+            <div class="gc-bug-line"><div class="sev-dot major"></div>Queen's ground slam penetrates bunker ceiling</div>
+          </div>
+        </div>
+        <div class="gc-footer">
+          <div class="gc-counts">3 BUGS · Q.MAJOR – Q.MINOR – MAJOR</div>
+          <div class="gc-arrow">VIEW REPORT →</div>
+        </div>
+      </div>
+
+      <div class="game-card" onclick="showGame('helldivers')">
+        <div class="gc-header">
+          <div><div class="gc-title">Helldivers 2</div><div class="gc-meta">PS5 · 2024 · INDEPENDENT</div></div>
+          <div class="platform-badge">PS5</div>
+        </div>
+        <div class="gc-body">
+          <div class="gc-type">Independent retail playtesting</div>
+          <div class="gc-bugs-summary">
+            <div class="gc-bug-line"><div class="sev-dot major"></div>Grenade counter integer overflow — 4,294,967,279/4</div>
+          </div>
+        </div>
+        <div class="gc-footer">
+          <div class="gc-counts">1 BUG · MAJOR · GAME LOGIC</div>
+          <div class="gc-arrow">VIEW REPORT →</div>
+        </div>
+      </div>
+
     </div>
-
-    <!-- MARVEL TOKON -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <div>
-          <div class="game-title">Marvel Tōkon: Fighting Souls</div>
-          <div class="game-meta">OFFICIAL BETA · DEC 2025 · 3 DAYS</div>
-        </div>
-        <div class="platform-badge">PS5</div>
-      </div>
-      <div class="game-card-body">
-        <div class="game-type">Voluntary PlayStation beta · Audio bug identified</div>
-        <div class="bugs-list">
-          <div class="bug-item qminor">
-            <span class="bug-severity">Q.MINOR</span>
-            <div>
-              <div class="bug-desc">Audio Settings preview function fails for SE and Ambient volume categories — only Voice volume triggers preview on Square press</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Audio]</span></div>
-              <span class="repro-badge">↑ 100% repro · Clip documented</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FOREVER SKIES -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <div>
-          <div class="game-title">Forever Skies</div>
-          <div class="game-meta">RETAIL · 2026 · V1.2.2 BUILD #43949</div>
-        </div>
-        <div class="platform-badge">PC</div>
-      </div>
-      <div class="game-card-body">
-        <div class="game-type">Independent playtesting · Survival game</div>
-        <div class="bugs-list">
-          <div class="bug-item major">
-            <span class="bug-severity">MAJOR</span>
-            <div>
-              <div class="bug-desc">Pouring "Old Canned Water" into boiler is blocked — but all empty bottles fill anyway without consuming the resource. Breaks core survival mechanic.</div>
-              <div class="bug-tags"><span class="bug-tag">[UX]</span><span class="bug-tag">[Game Logic]</span></div>
-              <span class="repro-badge">↑ 100% repro · Clip documented</span>
-            </div>
-          </div>
-          <div class="bug-item qminor">
-            <span class="bug-severity">Q.MINOR</span>
-            <div>
-              <div class="bug-desc">Missing word "cui" in Italian localization text at Wasteland Tower — grammatically incorrect sentence</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Localization]</span></div>
-              <span class="repro-badge">↑ 100% repro · Clip documented</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ARC RAIDERS -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <div>
-          <div class="game-title">ARC Raiders</div>
-          <div class="game-meta">RETAIL · 2026 · BUILD ID 22727655</div>
-        </div>
-        <div class="platform-badge">PC</div>
-      </div>
-      <div class="game-card-body">
-        <div class="game-type">Independent playtesting · Extraction shooter</div>
-        <div class="bugs-list">
-          <div class="bug-item qmajor">
-            <span class="bug-severity">Q.MAJOR</span>
-            <div>
-              <div class="bug-desc">Quest "Serata Film" shows as active on all maps — should only be active at Stella Montis. Confirmed on 4 separate maps.</div>
-              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Game Logic]</span></div>
-              <span class="repro-badge">↑ 100% repro · Screenshots</span>
-            </div>
-          </div>
-          <div class="bug-item qminor">
-            <span class="bug-severity">Q.MINOR</span>
-            <div>
-              <div class="bug-desc">Apollo's "Serata Film" voice line triggers on wrong maps — unrelated to player's current location</div>
-              <div class="bug-tags"><span class="bug-tag">[Audio]</span><span class="bug-tag">[Game Logic]</span></div>
-              <span class="repro-badge">~ 57% repro · Clip documented</span>
-            </div>
-          </div>
-          <div class="bug-item major">
-            <span class="bug-severity">MAJOR</span>
-            <div>
-              <div class="bug-desc">Queen's ground slam penetrates bunker ceiling at Red Lakes during Harvester event — players inside take damage regardless of position</div>
-              <div class="bug-tags"><span class="bug-tag">[Game Logic]</span><span class="bug-tag">[3D Models]</span></div>
-              <span class="repro-badge">↑ 100% repro · Screenshots + Clip</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- HELLDIVERS 2 -->
-    <div class="game-card">
-      <div class="game-card-header">
-        <div>
-          <div class="game-title">Helldivers 2</div>
-          <div class="game-meta">RETAIL · 2024 · INDEPENDENT</div>
-        </div>
-        <div class="platform-badge">PS5</div>
-      </div>
-      <div class="game-card-body">
-        <div class="game-type">Independent playtesting · Co-op shooter</div>
-        <div class="bugs-list">
-          <div class="bug-item major">
-            <span class="bug-severity">MAJOR</span>
-            <div>
-              <div class="bug-desc">Integer overflow in grenade counter — value jumps to 4,294,967,279/4 after throwing last grenade and rapidly toggling stratagem menu. Effectively unlimited grenades, breaks gameplay balance.</div>
-              <div class="bug-tags"><span class="bug-tag">[Game Logic]</span><span class="bug-tag">[UI]</span></div>
-              <span class="repro-badge">↑ 100% repro · Screenshot</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
+</div>
 
-  <div style="margin-top: 2rem; text-align: center;">
-    <a href="https://bit.ly/v2-portfolio" target="_blank" class="btn btn-secondary">
-      View Full Spreadsheet with Steps to Reproduce →
-    </a>
+<!-- DESTARA DETAIL -->
+<div class="page" id="page-destara">
+  <div class="inner">
+    <button class="back-btn" onclick="showPage('portfolio')">← Back to Portfolio</button>
+    <div class="game-detail-header">
+      <div class="section-label">REPORT</div>
+      <h2>Destara</h2>
+      <div class="game-detail-meta">
+        <span class="meta-pill">Android</span>
+        <span class="meta-pill">Sep 2025 · 14 days</span>
+        <span class="meta-pill">Collaborative Playtesting</span>
+        <span class="meta-pill">2 Bugs · 2 Feedback</span>
+      </div>
+      <p class="game-detail-context">Voluntary playtesting. Collaborated with a team of 15 Italian testers and 2 developers, reporting bugs and feedback via shared Google Sheets.</p>
+    </div>
+    <div class="reports-list">
+
+      <div class="report-card is-qmajor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qmajor">QUALITY MAJOR</span>
+            <span class="badge badge-platform">Android</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][Text] Some names are censored on the name entry screen</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[Text]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>By entering some common names, the censorship filter replaces the text with asterisks, making it impossible to use that name. In some cases, the same name is accepted if completed with the keyboard hint, while typing it manually censors it.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>The player should be able to write their own name in Italian without any problems.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>The censorship filter replaces the text with asterisks, even if the name is legitimate.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Start the game</span></li>
+                <li><span class="step-num">2</span><span>Start a new game and skip tutorial</span></li>
+                <li><span class="step-num">3</span><span>Proceed to the name entry screen</span></li>
+                <li><span class="step-num">4</span><span>Try entering: 'Mario' → replaced with *****. 'Francesco' → at letter C, 'Franc' is censored. With keyboard suggestion the name is accepted correctly.</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>—</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-qminor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qminor">QUALITY MINOR</span>
+            <span class="badge badge-platform">Android</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][Text] Small text error during the "Superstition" Tutorial</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[Text]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>During the "Superstition" tutorial the text incorrectly reads: "potrai avere incontrare".</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>"...potrai incontrare personaggi e nemici completamente diversi!"</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>"...potrai avere incontrare personaggi e nemici completamente diversi!"</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Reach the 'Superstition' tutorial section and read the on-screen text</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Screenshot</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-feed">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">FEEDBACK</span>
+            <span class="badge badge-feed">QUALITY MINOR</span>
+            <span class="badge badge-platform">Android</span>
+          </div>
+          <div>
+            <div class="report-summary">[UX][Game Logic] "Hunter" ability "Waiting" shows no noticeable damage change</div>
+            <div class="report-tags"><span class="report-tag">[UX]</span><span class="report-tag">[Game Logic]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>The "Hunter" skill "Waiting", which should increase strength and dexterity by 20–30–40%, doesn't show a noticeable impact on damage dealt (still 164 with "Sword"). May indicate a bug or undocumented design choice. Flagged for developer review.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>Visible damage increase after activation.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>Damage remains unchanged (164).</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Activate the 'Waiting' skill → observe damage output before and after</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>—</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-feed">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">FEEDBACK</span>
+            <span class="badge badge-feed">QUALITY MINOR</span>
+            <span class="badge badge-platform">Android</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][UX] Damage pop-ups remain visible too briefly on screen</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[UX]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>The pop-up showing damage dealt/received appears correctly, but remains visible for a very short time.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>Pop-up visible long enough for the player to read.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>Pop-up disappears almost instantly.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Engage in combat → observe damage pop-up duration</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>—</span></div>
+        </div>
+      </div>
+
+    </div>
   </div>
-</section>
+</div>
 
-<hr class="divider">
-
-<footer>
-  <div class="footer-name">Fabrizio L'Aprea · Junior QA Tester · Naples, Italy</div>
-  <div class="footer-links">
-    <a href="mailto:fabriziolaprea@gmail.com">fabriziolaprea@gmail.com</a>
-    <a href="https://bit.ly/v2-portfolio" target="_blank">Portfolio</a>
-    <a href="https://linkedin.com/in/fabrizio-l-aprea" target="_blank">LinkedIn</a>
+<!-- MARVEL DETAIL -->
+<div class="page" id="page-marvel">
+  <div class="inner">
+    <button class="back-btn" onclick="showPage('portfolio')">← Back to Portfolio</button>
+    <div class="game-detail-header">
+      <div class="section-label">REPORT</div>
+      <h2>Marvel Tōkon: Fighting Souls</h2>
+      <div class="game-detail-meta">
+        <span class="meta-pill">PS5</span>
+        <span class="meta-pill">05/12/2025 – 08/12/2025</span>
+        <span class="meta-pill">Official PlayStation Beta</span>
+        <span class="meta-pill">1 Bug</span>
+      </div>
+      <p class="game-detail-context">Voluntary playtesting for PlayStation. Closed beta period: 3 days.</p>
+    </div>
+    <div class="reports-list">
+      <div class="report-card is-qminor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qminor">QUALITY MINOR</span>
+            <span class="badge badge-platform">PS5</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][Audio] Preview function not triggered for most volume categories</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[Audio]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>In "Audio Settings", pressing Square is intended to trigger an audio preview for each volume category. However, the preview is only played for Voice volume.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>Pressing Square triggers preview for all volume categories.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>Preview only plays for "Voice Volume". No audio feedback for "SE Volume" and "Ambient Volume".</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Start the game</span></li>
+                <li><span class="step-num">2</span><span>Enter a match (online/offline)</span></li>
+                <li><span class="step-num">3</span><span>Press Start → Options</span></li>
+                <li><span class="step-num">4</span><span>Select "Audio Settings"</span></li>
+                <li><span class="step-num">5</span><span>Navigate to each volume category</span></li>
+                <li><span class="step-num">6</span><span>Press Square → observe missing audio feedback for SE and Ambient Volume</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Clip</span></div>
+        </div>
+      </div>
+    </div>
   </div>
-</footer>
+</div>
 
+<!-- FOREVER SKIES DETAIL -->
+<div class="page" id="page-forever">
+  <div class="inner">
+    <button class="back-btn" onclick="showPage('portfolio')">← Back to Portfolio</button>
+    <div class="game-detail-header">
+      <div class="section-label">REPORT</div>
+      <h2>Forever Skies</h2>
+      <div class="game-detail-meta">
+        <span class="meta-pill">PC / Steam</span>
+        <span class="meta-pill">2026</span>
+        <span class="meta-pill">Version 1.2.2 · Build #43949</span>
+        <span class="meta-pill">2 Bugs</span>
+      </div>
+      <p class="game-detail-context">Independent retail playtesting.</p>
+    </div>
+    <div class="reports-list">
+
+      <div class="report-card is-major">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-major">MAJOR</span>
+            <span class="badge badge-platform">PC</span>
+          </div>
+          <div>
+            <div class="report-summary">[UX][Game Logic] Full refill achieved by pouring "Old Canned Water" into boiler</div>
+            <div class="report-tags"><span class="report-tag">[UX]</span><span class="report-tag">[Game Logic]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>Pouring "Old Canned Water" into the boiler is blocked by game logic — yet all empty bottles in inventory are filled without consuming the resource. This breaks survival mechanics.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>Action is blocked; nothing happens in the inventory.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>All empty bottles are filled without consuming the Old Canned Water.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Find "Old Canned Water" and approach the boiler</span></li>
+                <li><span class="step-num">2</span><span>Equip one or more empty bottles</span></li>
+                <li><span class="step-num">3</span><span>Pour "Old Canned Water" into boiler</span></li>
+                <li><span class="step-num">4</span><span>Game blocks the action, but all bottles are filled anyway</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Clip</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-qminor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qminor">QUALITY MINOR</span>
+            <span class="badge badge-platform">PC</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][Localization] Text localization error in Wasteland Tower</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[Localization]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>While exploring the Wasteland Tower area at its highest point, a tablet contains a localization error: missing word 'cui'.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>"se la sono cercata nel momento in <strong>cui</strong> ci hanno tagliato fuori dalle scorte di cibo"</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>"se la sono cercata nel momento in ci hanno tagliato fuori dalle scorte di cibo"</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Go to Wasteland Tower area</span></li>
+                <li><span class="step-num">2</span><span>Reach the highest point</span></li>
+                <li><span class="step-num">3</span><span>Find the 'big refrigerator' and look right</span></li>
+                <li><span class="step-num">4</span><span>Check the tablet on the bed</span></li>
+                <li><span class="step-num">5</span><span>Read the document text</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Clip</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ARC RAIDERS DETAIL -->
+<div class="page" id="page-arc">
+  <div class="inner">
+    <button class="back-btn" onclick="showPage('portfolio')">← Back to Portfolio</button>
+    <div class="game-detail-header">
+      <div class="section-label">REPORT</div>
+      <h2>ARC Raiders</h2>
+      <div class="game-detail-meta">
+        <span class="meta-pill">PC</span>
+        <span class="meta-pill">2026</span>
+        <span class="meta-pill">Build ID: 22727655</span>
+        <span class="meta-pill">3 Bugs</span>
+      </div>
+      <p class="game-detail-context">Independent retail playtesting.</p>
+    </div>
+    <div class="reports-list">
+
+      <div class="report-card is-qmajor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qmajor">QUALITY MAJOR</span>
+            <span class="badge badge-platform">PC</span>
+          </div>
+          <div>
+            <div class="report-summary">[UI][Game Logic] Quest "Serata Film" appears active on wrong maps</div>
+            <div class="report-tags"><span class="report-tag">[UI]</span><span class="report-tag">[Game Logic]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>The quest "Serata Film", assigned by merchant Apollo to the map Stella Montis, appears highlighted as active in the quest panel even when the player is deployed on a completely different map.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>The "Serata Film" quest should appear highlighted as active only when the player is deployed at Stella Montis.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>The quest appears highlighted as active on all tested maps, regardless of the player's current location.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Accept the "Serata Film" quest from merchant Apollo (assigned location: Stella Montis)</span></li>
+                <li><span class="step-num">2</span><span>Deploy to any map other than Stella Montis</span></li>
+                <li><span class="step-num">3</span><span>Open the in-game map panel</span></li>
+                <li><span class="step-num">4</span><span>Check the quest list on the left side</span></li>
+                <li><span class="step-num">5</span><span>Observe "Serata Film" highlighted in white (active) despite being in the wrong map</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="note-card">
+            <p><strong>NOTE —</strong> Maps tested. Bug confirmed (100% repro): Spazioporto ✓ · Città Sepolta ✓ · Campo di Battaglia della Diga ✓ · Varco Blu ✓. Correct behavior: Stella Montis — quest highlighted as expected.</p>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Screenshots</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-qminor">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-qminor">QUALITY MINOR</span>
+            <span class="badge badge-platform">PC</span>
+          </div>
+          <div>
+            <div class="report-summary">[Audio][Game Logic] Apollo's "Serata Film" voice line triggers on wrong maps</div>
+            <div class="report-tags"><span class="report-tag">[Audio]</span><span class="report-tag">[Game Logic]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>Merchant Apollo's voice line referencing the "Serata Film" quest — assigned to Stella Montis — triggers during raids on unrelated maps, with no connection to the player's current location.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>Apollo's voice line referencing "Serata Film" should trigger only when the player is deployed at Stella Montis.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>The voice line triggers on unrelated maps during raids unrelated to Stella Montis.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Accept the "Serata Film" quest from merchant Apollo (assigned location: Stella Montis)</span></li>
+                <li><span class="step-num">2</span><span>Deploy to any map other than Stella Montis</span></li>
+                <li><span class="step-num">3</span><span>Start the raid</span></li>
+                <li><span class="step-num">4</span><span>Apollo's voice line referencing the Stella Montis quest may fire at the start of the session</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="note-card">
+            <p><strong>NOTE —</strong> On Stella Montis itself, the voice line did not trigger in 2 tested runs — possibly suppressed by another active quest on the same map. Flagged for developer review.</p>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>~57%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Clip</span></div>
+        </div>
+      </div>
+
+      <div class="report-card is-major">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-major">MAJOR</span>
+            <span class="badge badge-platform">PC</span>
+          </div>
+          <div>
+            <div class="report-summary">[Game Logic][3D Models] Queen's ground slam attack penetrates bunker ceiling during Harvester event — Dam Battlegrounds</div>
+            <div class="report-tags"><span class="report-tag">[Game Logic]</span><span class="report-tag">[3D Models]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>During the Harvester event on Dam Battlegrounds, the Queen performs a ground slam attack near the underground bunker located at Red Lakes, adjacent to the Raider Hatch. Despite the player being fully inside the bunker, the attack penetrates the bunker ceiling — which is the Queen's floor level — dealing damage to players inside regardless of their position or distance from the impact point. The Queen's leg visibly clips through the structure above.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>The bunker ceiling should block the Queen's ground slam. Players inside should receive no damage unless directly exposed.</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>The Queen's leg clips through the bunker ceiling. Damage is dealt to players inside, even when positioned away from the entrance and behind solid cover.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Verify the Harvester event is active on Dam Battlegrounds</span></li>
+                <li><span class="step-num">2</span><span>Deploy into the map</span></li>
+                <li><span class="step-num">3</span><span>Locate the underground bunker at Red Lakes, adjacent to the Raider Hatch</span></li>
+                <li><span class="step-num">4</span><span>Position inside the bunker</span></li>
+                <li><span class="step-num">5</span><span>Engage the Queen until she performs a ground slam near the bunker</span></li>
+                <li><span class="step-num">6</span><span>Observe leg clipping through the ceiling and damage dealt to players inside</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Screenshots · Clip</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- HELLDIVERS 2 DETAIL -->
+<div class="page" id="page-helldivers">
+  <div class="inner">
+    <button class="back-btn" onclick="showPage('portfolio')">← Back to Portfolio</button>
+    <div class="game-detail-header">
+      <div class="section-label">REPORT</div>
+      <h2>Helldivers 2</h2>
+      <div class="game-detail-meta">
+        <span class="meta-pill">PS5</span>
+        <span class="meta-pill">2024</span>
+        <span class="meta-pill">Independent Playtesting</span>
+        <span class="meta-pill">1 Bug</span>
+      </div>
+      <p class="game-detail-context">Independent retail playtesting.</p>
+    </div>
+    <div class="reports-list">
+      <div class="report-card is-major">
+        <div class="report-header">
+          <div class="report-badges">
+            <span class="badge badge-type">BUG</span>
+            <span class="badge badge-major">MAJOR</span>
+            <span class="badge badge-platform">PS5</span>
+          </div>
+          <div>
+            <div class="report-summary">[Game Logic][UI] Grenade counter displays an extreme incorrect value after rapid equipment actions</div>
+            <div class="report-tags"><span class="report-tag">[Game Logic]</span><span class="report-tag">[UI]</span></div>
+          </div>
+        </div>
+        <div class="report-body">
+          <div class="report-grid">
+            <div class="report-field">
+              <label>DESCRIPTION</label>
+              <p>Following repeated actions of equipping grenades combined with opening and closing the stratagem menu (L1), the system generates an incorrect count. The grenade display reports an extremely high value (4,294,967,279 out of 4), completely removing any challenge or resource management from the gameplay.</p>
+            </div>
+            <div class="report-field">
+              <label>EXPECTED RESULT</label>
+              <p>The grenade counter should display the correct amount of grenades available (max 4).</p>
+            </div>
+            <div class="report-field">
+              <label>ACTUAL RESULT</label>
+              <p>The counter displays 4,294,967,279/4, giving the player unlimited effective grenades and breaking gameplay balance.</p>
+            </div>
+            <div class="report-field full">
+              <label>STEPS TO REPRODUCE</label>
+              <ol class="steps-list">
+                <li><span class="step-num">1</span><span>Start the game and deploy into a mission</span></li>
+                <li><span class="step-num">2</span><span>Equip grenades from your loadout</span></li>
+                <li><span class="step-num">3</span><span>Throw all grenades until one remains</span></li>
+                <li><span class="step-num">4</span><span>Throw the last grenade and immediately open and close the stratagem menu (L1) multiple times</span></li>
+                <li><span class="step-num">5</span><span>Observe the Helldiver holding a grenade despite the counter showing 0</span></li>
+                <li><span class="step-num">6</span><span>Throw the grenade — counter jumps to an extreme value (4,294,967,279/4)</span></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+        <div class="report-footer">
+          <div class="report-meta-item"><span>REPRO RATE</span><span>100%</span></div>
+          <div class="report-meta-item"><span>ATTACHMENTS</span><span>Screenshot</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const pages=['home','about','skills','portfolio','destara','marvel','forever','arc','helldivers'];
+const navMap={about:'nav-about',portfolio:'nav-portfolio',skills:'nav-skills'};
+
+function showPage(id){
+  pages.forEach(p=>{
+    const el=document.getElementById('page-'+p);
+    if(el){el.classList.remove('active');el.scrollTop=0;}
+  });
+  const t=document.getElementById('page-'+id);
+  if(t)t.classList.add('active');
+  Object.keys(navMap).forEach(k=>{
+    const b=document.getElementById(navMap[k]);
+    if(b)b.classList.toggle('active',k===id);
+  });
+}
+
+function showGame(id){showPage(id);}
+</script>
 </body>
 </html>
