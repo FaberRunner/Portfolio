@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabrizio L'Aprea — Junior QA Tester</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080b0f;
+    --surface: #0e1218;
+    --card: #131820;
+    --border: #1e2730;
+    --accent: #00e5b0;
+    --accent-dim: rgba(0,229,176,0.12);
+    --accent-glow: rgba(0,229,176,0.06);
+    --text: #e8edf2;
+    --text-muted: #5a6880;
+    --text-mid: #8a9ab0;
+    --major: #e05252;
+    --major-bg: rgba(224,82,82,0.1);
+    --qmajor: #e0a052;
+    --qmajor-bg: rgba(224,160,82,0.1);
+    --qminor: #5294e0;
+    --qminor-bg: rgba(82,148,224,0.1);
+    --feedback: #888;
+    --feedback-bg: rgba(136,136,136,0.1);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+    background: rgba(8,11,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; color: var(--accent); letter-spacing: 0.08em;
+  }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    font-size: 13px; color: var(--text-mid); text-decoration: none;
+    letter-spacing: 0.05em; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 6rem 2.5rem 4rem;
+    max-width: 1100px; margin: 0 auto;
+    position: relative;
+  }
+  .hero-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px; color: var(--accent); letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .hero-tag::before {
+    content: ''; display: block; width: 32px; height: 1px; background: var(--accent);
+  }
+  h1 {
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 800; line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+  .hero-sub {
+    font-size: 1.1rem; color: var(--text-mid); max-width: 520px;
+    line-height: 1.7; margin-bottom: 2.5rem;
+  }
+  .hero-stats {
+    display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2.5rem;
+  }
+  .stat {
+    display: flex; flex-direction: column;
+  }
+  .stat-num {
+    font-size: 2rem; font-weight: 800; color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 0.75rem 1.75rem; border-radius: 4px;
+    font-family: 'Space Mono', monospace; font-size: 12px;
+    letter-spacing: 0.08em; text-decoration: none;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .btn-primary {
+    background: var(--accent); color: #080b0f; border: none;
+  }
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .btn-secondary:hover { background: var(--accent-dim); transform: translateY(-1px); }
+
+  .hero-grid {
+    position: absolute; right: -40px; top: 50%; transform: translateY(-50%);
+    opacity: 0.04; pointer-events: none;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--accent); line-height: 1.8;
+    display: none;
+  }
+
+  /* SECTIONS */
+  section {
+    max-width: 1100px; margin: 0 auto;
+    padding: 5rem 2.5rem;
+  }
+  .section-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px; color: var(--accent); letter-spacing: 0.2em;
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .section-label::after {
+    content: ''; flex: 0 0 40px; height: 1px; background: var(--accent); opacity: 0.4;
+  }
+  h2 {
+    font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 800;
+    letter-spacing: -0.02em; margin-bottom: 0.5rem;
+  }
+  .section-intro {
+    color: var(--text-mid); font-size: 1rem; margin-bottom: 3rem;
+    max-width: 580px;
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
+    align-items: start;
+  }
+  .about-text p {
+    color: var(--text-mid); line-height: 1.8; margin-bottom: 1rem; font-size: 0.95rem;
+  }
+  .about-text p strong { color: var(--text); font-weight: 600; }
+  .about-details {
+    display: flex; flex-direction: column; gap: 1rem;
+  }
+  .detail-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.25rem 1.5rem;
+  }
+  .detail-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; color: var(--accent); letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+  .detail-card-value {
+    font-size: 0.95rem; color: var(--text); font-weight: 600;
+  }
+  .detail-card-sub {
+    font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;
+  }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;
+  }
+  .skill-group {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1.25rem 1.5rem;
+  }
+  .skill-group-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px; color: var(--accent); letter-spacing: 0.15em;
+    margin-bottom: 0.75rem;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .skill-tag {
+    background: var(--accent-dim); color: var(--accent);
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    padding: 3px 8px; border-radius: 3px; letter-spacing: 0.05em;
+  }
+
+  /* PORTFOLIO */
+  .portfolio-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;
+  }
+  .game-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+    transition: border-color 0.25s, transform 0.2s;
+  }
+  .game-card:hover {
+    border-color: rgba(0,229,176,0.3); transform: translateY(-2px);
+  }
+  .game-card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+  }
+  .game-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.25rem; }
+  .game-meta {
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    color: var(--text-muted); letter-spacing: 0.05em;
+  }
+  .platform-badge {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 4px 10px;
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    color: var(--text-mid); white-space: nowrap; flex-shrink: 0;
+  }
+  .game-card-body { padding: 1rem 1.5rem 1.5rem; }
+  .game-type {
+    font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;
+    font-style: italic;
+  }
+  .bugs-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .bug-item {
+    border-radius: 6px; padding: 0.65rem 0.85rem;
+    display: flex; align-items: flex-start; gap: 0.75rem;
+  }
+  .bug-item.major { background: var(--major-bg); }
+  .bug-item.qmajor { background: var(--qmajor-bg); }
+  .bug-item.qminor { background: var(--qminor-bg); }
+  .bug-item.feedback { background: var(--feedback-bg); }
+  .bug-severity {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    letter-spacing: 0.05em; white-space: nowrap; padding-top: 1px;
+    flex-shrink: 0;
+  }
+  .major .bug-severity { color: var(--major); }
+  .qmajor .bug-severity { color: var(--qmajor); }
+  .qminor .bug-severity { color: var(--qminor); }
+  .feedback .bug-severity { color: var(--feedback); }
+  .bug-desc { font-size: 0.8rem; color: var(--text-mid); line-height: 1.5; }
+  .bug-tags {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
+  }
+  .bug-tag {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: var(--text-muted); background: var(--surface);
+    padding: 2px 6px; border-radius: 2px;
+  }
+  .repro-badge {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: var(--accent); margin-top: 4px; display: block;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 2.5rem;
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-name {
+    font-family: 'Space Mono', monospace; font-size: 12px; color: var(--text-muted);
+  }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--text-muted); text-decoration: none;
+    transition: color 0.2s; letter-spacing: 0.05em;
+  }
+  .footer-links a:hover { color: var(--accent); }
+
+  /* DIVIDER */
+  .divider {
+    border: none; border-top: 1px solid var(--border);
+    max-width: 1100px; margin: 0 auto;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { gap: 1rem; }
+    section { padding: 3.5rem 1.25rem; }
+    .hero { padding: 5rem 1.25rem 3rem; }
+    .about-grid { grid-template-columns: 1fr; }
+    footer { padding: 2rem 1.25rem; flex-direction: column; align-items: flex-start; }
+  }
+
+  /* SCAN LINE EFFECT */
+  body::after {
+    content: '';
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.015) 2px, rgba(0,0,0,0.015) 4px
+    );
+    pointer-events: none; z-index: 9999;
+  }
+
+  /* ACCENT LINE */
+  .accent-line {
+    width: 60px; height: 3px; background: var(--accent);
+    border-radius: 2px; margin-bottom: 1.5rem;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">FL // QA</div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#portfolio">Portfolio</a>
+    <a href="#skills">Skills</a>
+    <a href="https://bit.ly/v2-portfolio" target="_blank">Full Report</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-tag">JUNIOR QA TESTER — GAME TESTING</div>
+  <h1>Fabrizio<br>L'Aprea</h1>
+  <p class="hero-sub">
+    Methodical game tester with a background in audio production and 20+ years of gaming experience across every major PlayStation generation. Focused on functional testing, bug documentation, and Audio QA.
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <span class="stat-num">9</span>
+      <span class="stat-label">BUGS DOCUMENTED</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">5</span>
+      <span class="stat-label">GAMES TESTED</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">3</span>
+      <span class="stat-label">PLATFORMS</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">AVG REPRO RATE</span>
+    </div>
+  </div>
+  <div class="hero-cta">
+    <a href="https://bit.ly/v2-portfolio" target="_blank" class="btn btn-primary">View Full Portfolio</a>
+    <a href="mailto:fabriziolaprea@gmail.com" class="btn btn-secondary">Get in Touch</a>
+  </div>
+</div>
+
+<hr class="divider">
+
+<section id="about">
+  <div class="section-label">ABOUT</div>
+  <h2>Background</h2>
+  <p class="section-intro">Two decades of gaming experience combined with a trained audio ear — applied to systematic bug finding.</p>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>
+        I approach QA testing the same way I approach music production: with <strong>systematic attention to detail</strong>, pattern recognition, and a deep understanding of what a flawless experience should feel like — and what breaks it.
+      </p>
+      <p>
+        My background includes over <strong>20 years of DJ and music production activity</strong>, which directly translates to Audio QA competency. A trained ear for sound design, mix balance, volume inconsistencies, and audio anomalies in gaming contexts.
+      </p>
+      <p>
+        I completed a <strong>QA Testing course at Digital Bros Game Academy</strong> and have been independently playtesting and documenting bugs across Android, PS5, and PC platforms since 2024.
+      </p>
+      <p>
+        Open to <strong>remote and part-time opportunities</strong> in game testing and Audio QA across Europe.
+      </p>
+    </div>
+    <div class="about-details">
+      <div class="detail-card">
+        <div class="detail-card-label">LOCATION</div>
+        <div class="detail-card-value">Naples, Italy</div>
+        <div class="detail-card-sub">Available: Remote · Hybrid (Europe)</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">EDUCATION</div>
+        <div class="detail-card-value">QA Tester Course</div>
+        <div class="detail-card-sub">Digital Bros Game Academy · Feb–Apr 2025</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">LANGUAGES</div>
+        <div class="detail-card-value">Italian (Native) · English (C1)</div>
+        <div class="detail-card-sub">Localization testing capable</div>
+      </div>
+      <div class="detail-card">
+        <div class="detail-card-label">AUDIO BACKGROUND</div>
+        <div class="detail-card-value">DJ & Music Producer</div>
+        <div class="detail-card-sub">20+ years · Releases on Biometric Audio as Micro-Ice</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="skills">
+  <div class="section-label">SKILLS</div>
+  <h2>Technical Profile</h2>
+  <p class="section-intro">Core competencies built through coursework and independent testing practice.</p>
+  <div class="skills-grid">
+    <div class="skill-group">
+      <div class="skill-group-title">TESTING METHODS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Functional</span>
+        <span class="skill-tag">Regression</span>
+        <span class="skill-tag">Exploratory</span>
+        <span class="skill-tag">Localization QA</span>
+        <span class="skill-tag">Audio QA</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">TOOLS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">JIRA</span>
+        <span class="skill-tag">Google Sheets</span>
+        <span class="skill-tag">Bug Tracking</span>
+        <span class="skill-tag">Screen Capture</span>
+        <span class="skill-tag">Clip Recording</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">PLATFORMS</div>
+      <div class="skill-tags">
+        <span class="skill-tag">PlayStation 5</span>
+        <span class="skill-tag">PC / Steam</span>
+        <span class="skill-tag">Android</span>
+        <span class="skill-tag">Console Cert</span>
+      </div>
+    </div>
+    <div class="skill-group">
+      <div class="skill-group-title">AUDIO QA</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Sound Anomalies</span>
+        <span class="skill-tag">Mix Balance</span>
+        <span class="skill-tag">Audio Sync</span>
+        <span class="skill-tag">Voice Lines</span>
+        <span class="skill-tag">Ambient Audio</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="portfolio">
+  <div class="section-label">PORTFOLIO</div>
+  <h2>Bug Reports</h2>
+  <p class="section-intro">5 games tested across 3 platforms. All reports include severity assessment, reproduction steps, and documentation.</p>
+
+  <div class="portfolio-grid">
+
+    <!-- DESTARA -->
+    <div class="game-card">
+      <div class="game-card-header">
+        <div>
+          <div class="game-title">Destara</div>
+          <div class="game-meta">MOBILE GAME · SEP 2025 · 14 DAYS</div>
+        </div>
+        <div class="platform-badge">Android</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-type">Collaborative playtesting · Team of 15 testers + 2 devs</div>
+        <div class="bugs-list">
+          <div class="bug-item qmajor">
+            <span class="bug-severity">Q.MAJOR</span>
+            <div>
+              <div class="bug-desc">Common Italian names censored on name entry screen — inconsistently blocked by filter</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Text]</span></div>
+              <span class="repro-badge">↑ 100% repro</span>
+            </div>
+          </div>
+          <div class="bug-item qminor">
+            <span class="bug-severity">Q.MINOR</span>
+            <div>
+              <div class="bug-desc">Duplicate word in "Superstition" tutorial text — localization error</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Text]</span></div>
+              <span class="repro-badge">↑ 100% repro</span>
+            </div>
+          </div>
+          <div class="bug-item feedback">
+            <span class="bug-severity">FEEDBACK</span>
+            <div>
+              <div class="bug-desc">"Waiting" ability shows no visible damage increase despite documented stat change</div>
+              <div class="bug-tags"><span class="bug-tag">[UX]</span><span class="bug-tag">[Game Logic]</span></div>
+            </div>
+          </div>
+          <div class="bug-item feedback">
+            <span class="bug-severity">FEEDBACK</span>
+            <div>
+              <div class="bug-desc">Damage pop-ups disappear too quickly to be read by the player</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[UX]</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARVEL TOKON -->
+    <div class="game-card">
+      <div class="game-card-header">
+        <div>
+          <div class="game-title">Marvel Tōkon: Fighting Souls</div>
+          <div class="game-meta">OFFICIAL BETA · DEC 2025 · 3 DAYS</div>
+        </div>
+        <div class="platform-badge">PS5</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-type">Voluntary PlayStation beta · Audio bug identified</div>
+        <div class="bugs-list">
+          <div class="bug-item qminor">
+            <span class="bug-severity">Q.MINOR</span>
+            <div>
+              <div class="bug-desc">Audio Settings preview function fails for SE and Ambient volume categories — only Voice volume triggers preview on Square press</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Audio]</span></div>
+              <span class="repro-badge">↑ 100% repro · Clip documented</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOREVER SKIES -->
+    <div class="game-card">
+      <div class="game-card-header">
+        <div>
+          <div class="game-title">Forever Skies</div>
+          <div class="game-meta">RETAIL · 2026 · V1.2.2 BUILD #43949</div>
+        </div>
+        <div class="platform-badge">PC</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-type">Independent playtesting · Survival game</div>
+        <div class="bugs-list">
+          <div class="bug-item major">
+            <span class="bug-severity">MAJOR</span>
+            <div>
+              <div class="bug-desc">Pouring "Old Canned Water" into boiler is blocked — but all empty bottles fill anyway without consuming the resource. Breaks core survival mechanic.</div>
+              <div class="bug-tags"><span class="bug-tag">[UX]</span><span class="bug-tag">[Game Logic]</span></div>
+              <span class="repro-badge">↑ 100% repro · Clip documented</span>
+            </div>
+          </div>
+          <div class="bug-item qminor">
+            <span class="bug-severity">Q.MINOR</span>
+            <div>
+              <div class="bug-desc">Missing word "cui" in Italian localization text at Wasteland Tower — grammatically incorrect sentence</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Localization]</span></div>
+              <span class="repro-badge">↑ 100% repro · Clip documented</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ARC RAIDERS -->
+    <div class="game-card">
+      <div class="game-card-header">
+        <div>
+          <div class="game-title">ARC Raiders</div>
+          <div class="game-meta">RETAIL · 2026 · BUILD ID 22727655</div>
+        </div>
+        <div class="platform-badge">PC</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-type">Independent playtesting · Extraction shooter</div>
+        <div class="bugs-list">
+          <div class="bug-item qmajor">
+            <span class="bug-severity">Q.MAJOR</span>
+            <div>
+              <div class="bug-desc">Quest "Serata Film" shows as active on all maps — should only be active at Stella Montis. Confirmed on 4 separate maps.</div>
+              <div class="bug-tags"><span class="bug-tag">[UI]</span><span class="bug-tag">[Game Logic]</span></div>
+              <span class="repro-badge">↑ 100% repro · Screenshots</span>
+            </div>
+          </div>
+          <div class="bug-item qminor">
+            <span class="bug-severity">Q.MINOR</span>
+            <div>
+              <div class="bug-desc">Apollo's "Serata Film" voice line triggers on wrong maps — unrelated to player's current location</div>
+              <div class="bug-tags"><span class="bug-tag">[Audio]</span><span class="bug-tag">[Game Logic]</span></div>
+              <span class="repro-badge">~ 57% repro · Clip documented</span>
+            </div>
+          </div>
+          <div class="bug-item major">
+            <span class="bug-severity">MAJOR</span>
+            <div>
+              <div class="bug-desc">Queen's ground slam penetrates bunker ceiling at Red Lakes during Harvester event — players inside take damage regardless of position</div>
+              <div class="bug-tags"><span class="bug-tag">[Game Logic]</span><span class="bug-tag">[3D Models]</span></div>
+              <span class="repro-badge">↑ 100% repro · Screenshots + Clip</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HELLDIVERS 2 -->
+    <div class="game-card">
+      <div class="game-card-header">
+        <div>
+          <div class="game-title">Helldivers 2</div>
+          <div class="game-meta">RETAIL · 2024 · INDEPENDENT</div>
+        </div>
+        <div class="platform-badge">PS5</div>
+      </div>
+      <div class="game-card-body">
+        <div class="game-type">Independent playtesting · Co-op shooter</div>
+        <div class="bugs-list">
+          <div class="bug-item major">
+            <span class="bug-severity">MAJOR</span>
+            <div>
+              <div class="bug-desc">Integer overflow in grenade counter — value jumps to 4,294,967,279/4 after throwing last grenade and rapidly toggling stratagem menu. Effectively unlimited grenades, breaks gameplay balance.</div>
+              <div class="bug-tags"><span class="bug-tag">[Game Logic]</span><span class="bug-tag">[UI]</span></div>
+              <span class="repro-badge">↑ 100% repro · Screenshot</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 2rem; text-align: center;">
+    <a href="https://bit.ly/v2-portfolio" target="_blank" class="btn btn-secondary">
+      View Full Spreadsheet with Steps to Reproduce →
+    </a>
+  </div>
+</section>
+
+<hr class="divider">
+
+<footer>
+  <div class="footer-name">Fabrizio L'Aprea · Junior QA Tester · Naples, Italy</div>
+  <div class="footer-links">
+    <a href="mailto:fabriziolaprea@gmail.com">fabriziolaprea@gmail.com</a>
+    <a href="https://bit.ly/v2-portfolio" target="_blank">Portfolio</a>
+    <a href="https://linkedin.com/in/fabrizio-l-aprea" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</body>
+</html>
